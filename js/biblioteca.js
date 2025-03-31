@@ -172,6 +172,7 @@ formEj3EF.addEventListener('submit', (e) => {
             // consultaAutor = consultaAutor.split(" ")
             // console.log(consultaAutor);
             // Compararemos la lista de autores con la consulta realizada
+            // mirar include para que filtre por contenido
             if (libro.autor.toLocaleLowerCase() == consultaAutor) {
                 // Muestra de resultado de la busqueda:
                 // Isaac Asimov : Yo, robot (ciencia-ficción, idioma : español, época : s.XX) 
@@ -232,3 +233,40 @@ formEj4EF.addEventListener('submit', (e) => {
 // Actualizar automáticamente el listado de obras del ejercicio 1
 // Actualizar el LocalStorage
 
+
+// Nos traemos el div que contendrá el listado
+const ejer5 = document.querySelector('#selectQuitarObra')
+
+// Nos traemos el formulario para poder trabajar con el
+const formEj5EF = document.forms['formQuitarObra']
+
+let htmlEj5EF = '<select  name="bibliotecalista" id="bibliotecalista">'
+htmlEj5EF += '<option value="obraseleccionada" selected>Selecciona una obra para borrar</option>'
+
+biblioteca.forEach((libro) => {
+    console.log(libro.titulo);
+    console.log(biblioteca.indexOf(libro));
+    htmlEj5EF += `<option id="${libro.titulo}">Título : ${libro.titulo} y Autor : ${libro.autor}</option>`
+    
+   
+});
+
+formEj5EF.addEventListener('change', () => {
+    let obraSeleccionada = formEj5EF['bibliotecalista'].value
+    // Necesito sacar el id del option para poder obtener el indice ?
+    // console.log(biblioteca.indexOf(libro));
+    console.log(obraSeleccionada.id);
+        // biblioteca.splice(indice, 1)
+
+})
+
+
+htmlEj5EF += '</select>'
+
+ejer5.innerHTML = htmlEj5EF
+
+// Lanzamos la función del primer ejercicio para recargar el listado con los nuevos datos
+mostrarArray("ejer1")
+// Hacemos persistentes los datos en el localStorage para poder recuperarlos en caso de refresco del navegador
+// No sirve en caso de cerrarlo, es un almacenamiento temporal
+// localStorage.setItem("biblioteca", JSON.stringify(biblioteca))
