@@ -65,6 +65,7 @@ function mostrarArray (id) {
     // Introducimos en el <div> el codigo HTML para mostrarlo en la pagina web
     idHTMLEjer1.innerHTML = htmlEj1EF
     // console.log(htmlEj3EFEF);
+    cargarSelect()
 }
   
 // Llamamos a la función que acabamos de crear para que se ejecute y muestre el contenido
@@ -82,7 +83,7 @@ mostrarArray('ejer1')
 const ejer2 = document.getElementById("ejer2")
 // Cargamos el listado completo de titulos utilizando la función del ejercicio1, pero usando el id del ejercicio2
 // de esta forma mostramos el listado al cargar la página
-mostrarArray('ejer2')
+// mostrarArray('ejer2')
 
 // Nos traemos el formulario para poder trabajar con el
 const formEj2EF = document.forms["form-filtrado"];
@@ -98,7 +99,7 @@ formEj2EF.addEventListener("change", () => {
     // Establecemos una variable para que cuando no haya resultados poder mostrar un mensaje, por defecto será true y se mostrará el mensaje
     let sinResultados = true
     // Inicializamos el contenido, con una lista ordenanda <ol>
-    let htmlEj2EF = "<ol>";
+    let htmlEj2EF = "<ul>";
     // Recorremos el array para poder filtrar...
     biblioteca.forEach((libro) => {
         // ... según lo que el usuario seleccione, si el usuario no ha seleccionado nada
@@ -111,13 +112,13 @@ formEj2EF.addEventListener("change", () => {
         (epoca == "todo" || libro.epoca == epoca)
         ) {
             // Llenaremos la variable con el contenido coincidente segun el condicional
-            htmlEj2EF += `<li>Titulo: ${libro.titulo} Autor: ${libro.autor} Categoria: ${libro.categoria} Idioma: ${libro.idioma} Epoca: ${libro.epoca} </li>`
+            htmlEj2EF += `<li><span class="autor">${libro.autor}</span> : <span class="obra">${libro.titulo}</span> (${libro.categoria}), ${libro.idioma}</li>`
             // Pondremos la variable de sinResultados a false para evitar que salga el mensaje de "No hay ningún..."
             sinResultados = false
         }
     });
     // Finalizaremos el contenido, de la lista ordenanda con </ol>
-    htmlEj2EF += "</ol>"
+    htmlEj2EF += "</ul>"
     // Inyectaremos todo el contenido HTMl dentro del <div>, si esta vacio porque ha salido del bucle sin resultados estará sin ningín <li>
     ejer2.innerHTML += htmlEj2EF
     // En función del estado de la variable de sinResulatdos mostraremos el mensaje, todo irá en función del bucle y el condicional
@@ -146,9 +147,11 @@ formEj3EF.addEventListener('submit', (e) => {
   ejer3.textContent = ""
     // Evitamos la herencia
     e.preventDefault()
-    // Cargamos el valor del input text y limpiamos el texto delante y detras de espacios
+    // Cargamos el valor del input text y limpiamos el texto delante y detras de espacios vacios
     let consultaAutor = formEj3EF['autor'].value.trim()
     // console.log(consultaAutor);
+    // Pasamos el texto a minusculas para poder comparar en la busqueda posterior
+    consultaAutor = consultaAutor.toLocaleLowerCase()
     // Vamos a comprobar que no hayan dejado vacia la caja de busqueda,
     // en ese caso mostraremos un mensaje de error y seguiremos ejecutando el codigo,
     // para al final salir del listener
@@ -156,24 +159,22 @@ formEj3EF.addEventListener('submit', (e) => {
         ejer3.textContent = "Hay que incluir texto en la búsqueda"
     return
     }
-    // Pasamos el texto a minusculas para poder comparar en la busqueda posterior
-    consultaAutor = consultaAutor.toLocaleLowerCase()
+
     // console.log(consultaAutor);
-    // Establecemos una variable para que cuando no haya resultados poder mostrar un mensaje,
+    // Establecemos una variable para que cuando no haya resultados podamos mostrar un mensaje,
     //  por defecto será true y se mostrará el mensaje
     let sinResultados = true
     // Inicializamos el contenido, con una lista ordenanda <ol>
     let htmlEj3EF = "<ol>";
         // Recorremos el array para poder filtrar...
         biblioteca.forEach((libro) => {
-
-            console.log(libro["autor"]);
-            console.log(consultaAutor);
-            // consultaAutor = consultaAutor.split(" ")
+            // Checks varios
+            // console.log(libro["autor"]);
             // console.log(consultaAutor);
-            // Compararemos la lista de autores con la consulta realizada
-            // mirar include para que filtre por contenido
-            if (libro.autor.toLocaleLowerCase() == consultaAutor) {
+            // console.log((libro.autor.toLocaleLowerCase()).includes(consultaAutor));
+            // Compararemos la lista de autores con la consulta realizada, pasamos el texto a minúsculas
+            // y con el includes buscamos la cadena de texto dentro de la consulta
+            if ((libro.autor.toLocaleLowerCase()).includes(consultaAutor)) {
                 // Muestra de resultado de la busqueda:
                 // Isaac Asimov : Yo, robot (ciencia-ficción, idioma : español, época : s.XX) 
                 htmlEj3EF += `<li>${libro.autor} : ${libro.titulo} (${libro.categoria}, idioma : ${libro.idioma} époce : ${libro.epoca}</li>`
@@ -188,7 +189,6 @@ formEj3EF.addEventListener('submit', (e) => {
     // excepto si no hay ninguna coincidencia, según el boolean sinResultados,
     // en cuyo caso mostraremos el mensaje "No hay ... "
     ejer3.innerHTML = sinResultados ? "No hay ningún autor que coincida con la búsqueda" : htmlEj3EF
-
 })
 
 // ==========================================================================================================
@@ -222,6 +222,8 @@ formEj4EF.addEventListener('submit', (e) => {
     // Hacemos persistentes los datos en el localStorage para poder recuperarlos en caso de refresco del navegador
     // No sirve en caso de cerrarlo, es un almacenamiento temporal
     localStorage.setItem("biblioteca", JSON.stringify(biblioteca))
+    formEj4EF.reset()
+    cargarSelect()
 })
 
 
@@ -233,41 +235,62 @@ formEj4EF.addEventListener('submit', (e) => {
 // Actualizar automáticamente el listado de obras del ejercicio 1
 // Actualizar el LocalStorage
 
+//Creamos una función para actualizar el select una vez eliminada alguna obra
+function cargarSelect() {
+    // Nos traemos el div que contendrá el listado
+    const ejer5 = document.querySelector('#selectQuitarObra')
 
-// Nos traemos el div que contendrá el listado
-const ejer5 = document.querySelector('#selectQuitarObra')
+    // Nos traemos el formulario para poder trabajar con el
+    const formEj5EF = document.forms['formQuitarObra']
 
-// Nos traemos el formulario para poder trabajar con el
-const formEj5EF = document.forms['formQuitarObra']
+    // Definimos la variable que utilizaremos para generar el select con los options e incluimos el select
+    let htmlEj5EF = '<select  name="bibliotecalista" id="bibliotecalista">'
+    // Añadimos a la variable anterior el primer option con un mensaje descriptivo
+    htmlEj5EF += '<option value="obraseleccionada" selected>Selecciona una obra para borrar</option>'
 
-let htmlEj5EF = '<select  name="bibliotecalista" id="bibliotecalista">'
-htmlEj5EF += '<option value="obraseleccionada" selected>Selecciona una obra para borrar</option>'
-
-biblioteca.forEach((libro) => {
-    console.log(libro.titulo);
-    console.log(biblioteca.indexOf(libro));
-    htmlEj5EF += `<option value="${libro.titulo}">Título : ${libro.titulo} y Autor : ${libro.autor}</option>`
+    // Ejecutamos un bucle para llenar el select con los options que llevarán las obras
+    biblioteca.forEach((libro) => {
+        // console.log(libro.titulo);
+        // console.log(biblioteca.indexOf(libro));
+        // Añadimos a la variable anterior un option por cada obra
+        htmlEj5EF += `<option value="${libro.titulo}">Título : ${libro.titulo}</option>`
+    });
     
-   
-});
+    // Finalizamos el select añadiendo el tag de cierre a la variable que lo contiene
+    htmlEj5EF += '</select>'
 
-formEj5EF.addEventListener('change', () => {
-    let obraSeleccionada = formEj5EF['bibliotecalista'].value
-    // Necesito sacar el id del option para poder obtener el indice ?
-    // console.log(biblioteca.['titulo'].indexOf(obraSeleccionada));
-    console.log(biblioteca.titulo.indexOf(obraSeleccionada));
-    console.log(obraSeleccionada);
-        // biblioteca.splice(indice, 1)
+    // Inyectamos el codigo HTML en el documento
+    ejer5.innerHTML = htmlEj5EF
 
-})
+    // Con un Listener que detecte el cambio vamos a detectar la obra seleccionada y obtener el indice
+    formEj5EF.addEventListener('change', () => {
+        // Obtenemos el valor del select
+        let obraSeleccionada = formEj5EF['bibliotecalista'].value
+        // Buscamos el indice de la obra seleccionada para pasarselo a la función de borrado
+        // y añadirlo al boton en el onclick    
+        const indice = biblioteca.findIndex(obra => obra.titulo === obraSeleccionada)
+        // console.log(obraSeleccionada);
+        // console.log(indice);
+        // Seleccionamos el boton, en el fichero HTML hemos puesto un id para facilitar la tarea
+        const botonBorrar = document.querySelector('#botonQuitarObra')
+        // Establecemos el atributo onclick pasandole a la función eliminarObra el indice obtenido anteriormente
+        botonBorrar.setAttribute("onclick", `eliminarObra(${indice})`)
+    })
+}
+
+// Creamos una nueva función para eliminar la obra seleccionada, el parametro lo obtenemos del boton de borrado
+function eliminarObra(indice) {
+    // Eliminamos la obra con el indice seleccionado
+    biblioteca.splice(indice, 1)
+    // Hacemos persistentes los datos en el localStorage para poder recuperarlos en caso de refresco del navegador
+    // No sirve en caso de cerrarlo, es un almacenamiento temporal
+    localStorage.setItem("biblioteca", JSON.stringify(biblioteca))
+    // Lanzamos la función del primer ejercicio para recargar el listado con los nuevos datos
+    mostrarArray("ejer1")
+    // Recargamos el select por si quisieramos borrar otra obra
+    cargarSelect()
+}
 
 
-htmlEj5EF += '</select>'
 
-ejer5.innerHTML = htmlEj5EF
 
-// Lanzamos la función del primer ejercicio para recargar el listado con los nuevos datos
-mostrarArray("ejer1")
-// Hacemos persistentes los datos en el localStorage para poder recuperarlos en caso de refresco del navegador
-// No sirve en caso de cerrarlo, es un almacenamiento temporal
-// localStorage.setItem("biblioteca", JSON.stringify(biblioteca))
