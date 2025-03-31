@@ -31,10 +31,6 @@ const biblioteca = JSON.parse(localStorage.getItem("biblioteca")) || [
     { titulo: "Cròniques Marcianes", autor: "Ray Bradbury", categoria: "ciencia-ficción", idioma: "català", epoca: "s.XX" },
 ]
 
-
-
-
-
 // ==========================================================================================================
 // EJERCICIO 1
 // Libros disponibleS
@@ -43,8 +39,37 @@ const biblioteca = JSON.parse(localStorage.getItem("biblioteca")) || [
 // Llista del llibres
 // const listaLibros = document.getElementById("listaLibros");
 
-
-
+// Creamos esta función para poder ejecutar la actualización del listado para los otros ejercicios
+// y al final la llamamos con el id del div para poder mostrarla en este ejercicio
+function mostrarArray (id) {
+    // Con esta función ordenamos los libros por orden alfabetico del titulo
+    biblioteca.sort((a, b) => {
+      return a.titulo.localeCompare(b.titulo, "es-ES", { numeric: true })
+    });
+    // Checks varios
+    // console.log(biblioteca);
+    // console.log(id);
+    // Nos traemos el elemento asociado al id, en este caso un <div>
+    const idHTMLEjer1 = document.getElementById(id)
+    // Inicializamos el contenido de la lista creando la variable que lo contendra en este caso una lista ordenada <ol>
+    let htmlEj1EF = "<ol>"
+    // Con es bucle sacaremos cada dato del array...
+    biblioteca.forEach((libro) => {
+        // Checks varios
+        // console.log(libro["titulo"]);
+        // ... y lo introduciremos en la variable antes mencionada como elemento de lista ordenada <li>
+        htmlEj1EF += `<li>Titulo: ${libro.titulo} Autor: ${libro.autor} Categoria: ${libro.categoria} Idioma: ${libro.idioma} Epoca: ${libro.epoca} </li>`
+    })
+    // Finalizaremos la lista ordenada con </ol>
+    htmlEj1EF += '</ol>'
+    // Introducimos en el <div> el codigo HTML para mostrarlo en la pagina web
+    idHTMLEjer1.innerHTML = htmlEj1EF
+    // console.log(htmlEj3EFEF);
+}
+  
+// Llamamos a la función que acabamos de crear para que se ejecute y muestre el contenido
+// Utilizando funciones nos evitaremos tener que volver a escribir lo mismo
+mostrarArray('ejer1')
 
 // ==========================================================================================================
 // EJERCICIO 2
@@ -53,7 +78,53 @@ const biblioteca = JSON.parse(localStorage.getItem("biblioteca")) || [
 // Las obras se mostrarán según aparece en la imagen modelo1.png
 // Hay que aplicar algunos estilos que ya están definidos en el css
 
+// Nos traemos el div que contendrá el listado
+const ejer2 = document.getElementById("ejer2")
+// Cargamos el listado completo de titulos utilizando la función del ejercicio1, pero usando el id del ejercicio2
+// de esta forma mostramos el listado al cargar la página
+mostrarArray('ejer2')
 
+// Nos traemos el formulario para poder trabajar con el
+const formEj2EF = document.forms["form-filtrado"];
+
+// Con un evento en el cambio de seleccion filtraremos
+formEj2EF.addEventListener("change", () => {
+    // Preparamos el contenido del <div>, de momento vacio
+    ejer2.innerHTML = ""
+    // Establecemos unas variables (constantes) con el elemento seleccionado para posterioremente poder filtrar
+    const categoria = formEj2EF["categoria"].value;
+    const idioma = formEj2EF["idioma"].value;
+    const epoca = formEj2EF["epoca"].value;
+    // Establecemos una variable para que cuando no haya resultados poder mostrar un mensaje, por defecto será true y se mostrará el mensaje
+    let sinResultados = true
+    // Inicializamos el contenido, con una lista ordenanda <ol>
+    let htmlEj2EF = "<ol>";
+    // Recorremos el array para poder filtrar...
+    biblioteca.forEach((libro) => {
+        // ... según lo que el usuario seleccione, si el usuario no ha seleccionado nada
+        // o ha seleccionado sin especificar en todos los filtros, se mostrará todo el listado,
+        // en caso de que haya seleccionado algo distinto se mostrarán la coincidencias en base a los filtros del condicional,
+        // Si no hay coincidencias saldrá del condicional y consecuentemente del bucle
+        if (
+        (categoria == "todo" || libro.categoria == categoria) &&
+        (idioma == "todo" || libro.idioma == idioma) &&
+        (epoca == "todo" || libro.epoca == epoca)
+        ) {
+            // Llenaremos la variable con el contenido coincidente segun el condicional
+            htmlEj2EF += `<li>Titulo: ${libro.titulo} Autor: ${libro.autor} Categoria: ${libro.categoria} Idioma: ${libro.idioma} Epoca: ${libro.epoca} </li>`
+            // Pondremos la variable de sinResultados a false para evitar que salga el mensaje de "No hay ningún..."
+            sinResultados = false
+        }
+    });
+    // Finalizaremos el contenido, de la lista ordenanda con </ol>
+    htmlEj2EF += "</ol>"
+    // Inyectaremos todo el contenido HTMl dentro del <div>, si esta vacio porque ha salido del bucle sin resultados estará sin ningín <li>
+    ejer2.innerHTML += htmlEj2EF
+    // En función del estado de la variable de sinResulatdos mostraremos el mensaje, todo irá en función del bucle y el condicional
+    if (sinResultados) {
+        ejer2.innerHTML = "No hay ningun libro que cumpla las condiciones"
+    }
+});
 
 // ==========================================================================================================
 // EJERCICIO 3
@@ -63,7 +134,61 @@ const biblioteca = JSON.parse(localStorage.getItem("biblioteca")) || [
 // La salida por pantalla será en este formato:
 // Isaac Asimov : Yo, robot (ciencia-ficción, idioma : español, época : s.XX) 
 
+// Nos traemos el div que contendrá el listado
+const ejer3 = document.querySelector('#ejer3')
 
+// Nos traemos el formulario para poder trabajar con el
+const formEj3EF = document.forms['form-autor']
+
+// En el evento del submit del formulario ponemos un listener
+formEj3EF.addEventListener('submit', (e) => {
+// Preparamos el contenido del <div>, de momento vacio
+  ejer3.textContent = ""
+    // Evitamos la herencia
+    e.preventDefault()
+    // Cargamos el valor del input text y limpiamos el texto delante y detras de espacios
+    let consultaAutor = formEj3EF['autor'].value.trim()
+    // console.log(consultaAutor);
+    // Vamos a comprobar que no hayan dejado vacia la caja de busqueda,
+    // en ese caso mostraremos un mensaje de error y seguiremos ejecutando el codigo,
+    // para al final salir del listener
+    if (consultaAutor.length == 0) {
+        ejer3.textContent = "Hay que incluir texto en la búsqueda"
+    return
+    }
+    // Pasamos el texto a minusculas para poder comparar en la busqueda posterior
+    consultaAutor = consultaAutor.toLocaleLowerCase()
+    // console.log(consultaAutor);
+    // Establecemos una variable para que cuando no haya resultados poder mostrar un mensaje,
+    //  por defecto será true y se mostrará el mensaje
+    let sinResultados = true
+    // Inicializamos el contenido, con una lista ordenanda <ol>
+    let htmlEj3EF = "<ol>";
+        // Recorremos el array para poder filtrar...
+        biblioteca.forEach((libro) => {
+
+            console.log(libro["autor"]);
+            console.log(consultaAutor);
+            // consultaAutor = consultaAutor.split(" ")
+            // console.log(consultaAutor);
+            // Compararemos la lista de autores con la consulta realizada
+            if (libro.autor.toLocaleLowerCase() == consultaAutor) {
+                // Muestra de resultado de la busqueda:
+                // Isaac Asimov : Yo, robot (ciencia-ficción, idioma : español, época : s.XX) 
+                htmlEj3EF += `<li>${libro.autor} : ${libro.titulo} (${libro.categoria}, idioma : ${libro.idioma} époce : ${libro.epoca}</li>`
+                // Pondremos la variable de sinResultados a false para evitar que salga el mensaje de "No hay ningún..."
+                sinResultados = false
+            }
+        
+        });
+    // Finalizaremos el contenido, de la lista ordenanda con </ol>
+    htmlEj3EF += "</ol>"
+    // Inyectaremos todo el contenido HTMl dentro del <div>,
+    // excepto si no hay ninguna coincidencia, según el boolean sinResultados,
+    // en cuyo caso mostraremos el mensaje "No hay ... "
+    ejer3.innerHTML = sinResultados ? "No hay ningún autor que coincida con la búsqueda" : htmlEj3EF
+
+})
 
 // ==========================================================================================================
 // EJERCICIO 4
@@ -72,7 +197,31 @@ const biblioteca = JSON.parse(localStorage.getItem("biblioteca")) || [
 // Conseguir permanencia con LocalStorage
 // Actualizar automáticamente el listado de obras del ejercicio 1
 
+// Nos traemos el formulario para poder trabajar con el
+const formEj4EF = document.forms['incluirObra']
 
+// En el evento del submit del formulario ponemos un listener
+formEj4EF.addEventListener('submit', (e) => {
+    e.preventDefault()
+    // Cargamos todos los valores de los inputs de texto
+    let autor = formEj4EF['incluir-autor'].value
+    let titulo = formEj4EF['incluir-titulo'].value
+    let categoria = formEj4EF['incluir-categoria'].value
+    let idioma = formEj4EF['incluir-idioma'].value
+    let epoca = formEj4EF['incluir-epoca'].value
+    // Si hay alguno vacio se mostrará el error del sistema
+    console.log(autor, titulo, categoria, idioma, epoca);
+    //  Creamos el objetoObra con los datos introducidos
+    let objetoObra = {titulo, autor, categoria, idioma, epoca}
+    console.log(objetoObra);
+    // Introducimos el objeto anterior en el array mediante un push del objeto
+    biblioteca.push(objetoObra)
+    // Lanzamos la función del primer ejercicio para recargar el listado con los nuevos datos
+    mostrarArray("ejer1")
+    // Hacemos persistentes los datos en el localStorage para poder recuperarlos en caso de refresco del navegador
+    // No sirve en caso de cerrarlo, es un almacenamiento temporal
+    localStorage.setItem("biblioteca", JSON.stringify(biblioteca))
+})
 
 
 
