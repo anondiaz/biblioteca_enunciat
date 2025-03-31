@@ -246,7 +246,7 @@ htmlEj5EF += '<option value="obraseleccionada" selected>Selecciona una obra para
 biblioteca.forEach((libro) => {
     console.log(libro.titulo);
     console.log(biblioteca.indexOf(libro));
-    htmlEj5EF += `<option id="${libro.titulo}">Título : ${libro.titulo} y Autor : ${libro.autor}</option>`
+    htmlEj5EF += `<option value="${libro.titulo}">Título : ${libro.titulo} y Autor : ${libro.autor}</option>`
     
    
 });
@@ -254,8 +254,9 @@ biblioteca.forEach((libro) => {
 formEj5EF.addEventListener('change', () => {
     let obraSeleccionada = formEj5EF['bibliotecalista'].value
     // Necesito sacar el id del option para poder obtener el indice ?
-    // console.log(biblioteca.indexOf(libro));
-    console.log(obraSeleccionada.id);
+    // console.log(biblioteca.['titulo'].indexOf(obraSeleccionada));
+    console.log(biblioteca.titulo.indexOf(obraSeleccionada));
+    console.log(obraSeleccionada);
         // biblioteca.splice(indice, 1)
 
 })
