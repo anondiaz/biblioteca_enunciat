@@ -58,7 +58,7 @@ function mostrarArray (id) {
         // Checks varios
         // console.log(libro["titulo"]);
         // ... y lo introduciremos en la variable antes mencionada como elemento de lista ordenada <li>
-        htmlEj1EF += `<li>Titulo: ${libro.titulo} Autor: ${libro.autor} Categoria: ${libro.categoria} Idioma: ${libro.idioma} Epoca: ${libro.epoca} </li>`
+        htmlEj1EF += `<li>Título: ${libro.titulo} Autor: ${libro.autor} Categoría: ${libro.categoria} Idioma: ${libro.idioma} Época: ${libro.epoca} </li>`
     })
     // Finalizaremos la lista ordenada con </ol>
     htmlEj1EF += '</ol>'
@@ -123,7 +123,7 @@ formEj2EF.addEventListener("change", () => {
     ejer2.innerHTML += htmlEj2EF
     // En función del estado de la variable de sinResulatdos mostraremos el mensaje, todo irá en función del bucle y el condicional
     if (sinResultados) {
-        ejer2.innerHTML = "No hay ningun libro que cumpla las condiciones"
+        ejer2.innerHTML = "No hay ningún libro que cumpla las condiciones"
     }
 });
 
@@ -177,7 +177,7 @@ formEj3EF.addEventListener('submit', (e) => {
             if ((libro.autor.toLocaleLowerCase()).includes(consultaAutor)) {
                 // Muestra de resultado de la busqueda:
                 // Isaac Asimov : Yo, robot (ciencia-ficción, idioma : español, época : s.XX) 
-                htmlEj3EF += `<li>${libro.autor} : ${libro.titulo} (${libro.categoria}, idioma : ${libro.idioma} époce : ${libro.epoca}</li>`
+                htmlEj3EF += `<li>${libro.autor} : ${libro.titulo} (${libro.categoria}, idioma : ${libro.idioma} época : ${libro.epoca}</li>`
                 // Pondremos la variable de sinResultados a false para evitar que salga el mensaje de "No hay ningún..."
                 sinResultados = false
             }
@@ -290,7 +290,4 @@ function eliminarObra(indice) {
     // Recargamos el select por si quisieramos borrar otra obra
     cargarSelect()
 }
-
-
-
 
