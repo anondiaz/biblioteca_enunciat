@@ -88,8 +88,8 @@ const ejer2 = document.getElementById("ejer2")
 // Nos traemos el formulario para poder trabajar con el
 const formEj2EF = document.forms["form-filtrado"];
 
-// Con un evento en el cambio de seleccion filtraremos
-formEj2EF.addEventListener("change", () => {
+function filtradoEj2 (){
+
     // Preparamos el contenido del <div>, de momento vacio
     ejer2.innerHTML = ""
     // Establecemos unas variables (constantes) con el elemento seleccionado para posterioremente poder filtrar
@@ -125,6 +125,15 @@ formEj2EF.addEventListener("change", () => {
     if (sinResultados) {
         ejer2.innerHTML = "No hay ningún libro que cumpla las condiciones"
     }
+}
+
+// Llamamos a la función para que se ejecute
+filtradoEj2 ()
+
+// Con un evento en el cambio de seleccion filtraremos
+formEj2EF.addEventListener("change", () => {
+    // Llamamos a la función en el evento de cambio con el escuchador
+    filtradoEj2 ()
 });
 
 // ==========================================================================================================
@@ -141,25 +150,8 @@ const ejer3 = document.querySelector('#ejer3')
 // Nos traemos el formulario para poder trabajar con el
 const formEj3EF = document.forms['form-autor']
 
-// En el evento del submit del formulario ponemos un listener
-formEj3EF.addEventListener('submit', (e) => {
-// Preparamos el contenido del <div>, de momento vacio
-  ejer3.textContent = ""
-    // Evitamos la herencia
-    e.preventDefault()
-    // Cargamos el valor del input text y limpiamos el texto delante y detras de espacios vacios
-    let consultaAutor = formEj3EF['autor'].value.trim()
-    // console.log(consultaAutor);
-    // Pasamos el texto a minusculas para poder comparar en la busqueda posterior
-    consultaAutor = consultaAutor.toLocaleLowerCase()
-    // Vamos a comprobar que no hayan dejado vacia la caja de busqueda,
-    // en ese caso mostraremos un mensaje de error y seguiremos ejecutando el codigo,
-    // para al final salir del listener
-    if (consultaAutor.length == 0) {
-        ejer3.textContent = "Hay que incluir texto en la búsqueda"
-    return
-    }
-
+// Creamos una función para la busqueda
+function busquedaEj2 (consultaAutor) {
     // console.log(consultaAutor);
     // Establecemos una variable para que cuando no haya resultados podamos mostrar un mensaje,
     //  por defecto será true y se mostrará el mensaje
@@ -189,6 +181,28 @@ formEj3EF.addEventListener('submit', (e) => {
     // excepto si no hay ninguna coincidencia, según el boolean sinResultados,
     // en cuyo caso mostraremos el mensaje "No hay ... "
     ejer3.innerHTML = sinResultados ? "No hay ningún autor que coincida con la búsqueda" : htmlEj3EF
+}
+
+// En el evento del submit del formulario ponemos un listener
+formEj3EF.addEventListener('submit', (e) => {
+// Preparamos el contenido del <div>, de momento vacio
+  ejer3.textContent = ""
+    // Evitamos la herencia
+    e.preventDefault()
+    // Cargamos el valor del input text y limpiamos el texto delante y detras de espacios vacios
+    let consultaAutor = formEj3EF['autor'].value.trim()
+    // console.log(consultaAutor);
+    // Pasamos el texto a minusculas para poder comparar en la busqueda posterior
+    consultaAutor = consultaAutor.toLocaleLowerCase()
+    // Vamos a comprobar que no hayan dejado vacia la caja de busqueda,
+    // en ese caso mostraremos un mensaje de error y seguiremos ejecutando el codigo,
+    // para al final salir del listener
+    if (consultaAutor.length == 0) {
+        ejer3.textContent = "Hay que incluir texto en la búsqueda"
+    return
+    }
+    // Llamamos a la función para que se ejecute cuando se produzca el evento
+    busquedaEj2(consultaAutor)
 })
 
 // ==========================================================================================================
@@ -211,10 +225,10 @@ formEj4EF.addEventListener('submit', (e) => {
     let idioma = formEj4EF['incluir-idioma'].value
     let epoca = formEj4EF['incluir-epoca'].value
     // Si hay alguno vacio se mostrará el error del sistema
-    console.log(autor, titulo, categoria, idioma, epoca);
+    // console.log(autor, titulo, categoria, idioma, epoca);
     //  Creamos el objetoObra con los datos introducidos
     let objetoObra = {titulo, autor, categoria, idioma, epoca}
-    console.log(objetoObra);
+    // console.log(objetoObra);
     // Introducimos el objeto anterior en el array mediante un push del objeto
     biblioteca.push(objetoObra)
     // Lanzamos la función del primer ejercicio para recargar el listado con los nuevos datos
@@ -222,8 +236,15 @@ formEj4EF.addEventListener('submit', (e) => {
     // Hacemos persistentes los datos en el localStorage para poder recuperarlos en caso de refresco del navegador
     // No sirve en caso de cerrarlo, es un almacenamiento temporal
     localStorage.setItem("biblioteca", JSON.stringify(biblioteca))
+    //Borramos los valores del formulario
     formEj4EF.reset()
+    //Recargamos el select para que esté actualizado
     cargarSelect()
+    // Recargamos el filtrado del ejercicio 2
+    filtradoEj2 ()
+    // // Recargamos la busqueda con los nuevos resultados
+    // // No se si esto es deseable, pero es posible hacerlo
+    // busquedaEj2()
 })
 
 
@@ -289,5 +310,10 @@ function eliminarObra(indice) {
     mostrarArray("ejer1")
     // Recargamos el select por si quisieramos borrar otra obra
     cargarSelect()
+    // Recargamos el filtrado del ejercicio 2
+    filtradoEj2 ()
+    // // Recargamos la busqueda con los nuevos resultados
+    // // No se si esto es deseable, pero es posible hacerlo
+    // busquedaEj2()
 }
 
